@@ -1,0 +1,106 @@
+    1  apt install build-essential pkg-config git
+    2  apt install zlib1g-dev
+    3  ls
+    4  git clone https://github.com/gpac/gpac.git gpac_public
+    5  cd gpac_public/
+    6  ./configure --static-bin
+    7  make
+    8  ls
+    9  cd bin
+   10  ls
+   11  cd gcc/
+   12  ls
+   13  ./MP4Box 
+   14  ./MP4Box -h
+   15  ./MP4Box a
+   16  cd ..
+   17  ls
+   18  cd ..
+   19  ls
+   20  pwd
+   21  ls
+   22  .x264 --output low_config.264 --fps 24 --preset slow --bitrate 100 --vbv-maxrate 4800 --vbv-bufsize 9600 --min-keyint 48 --keyint 48 --scenecut 0 --no-scenecut --pass 1 --video-filter "resize:width=160,heigh=90" low_config.mp4
+   23  ./x264 --output low_config.264 --fps 24 --preset slow --bitrate 100 --vbv-maxrate 4800 --vbv-bufsize 9600 --min-keyint 48 --keyint 48 --scenecut 0 --no-scenecut --pass 1 --video-filter "resize:width=160,heigh=90" low_config.mp4
+   24  ./x264 --output low_config.264 --fps 24 --preset slow --bitrate 100 --vbv-maxrate 4800 --vbv-bufsize 9600 --min-keyint 48 --keyint 48 --scenecut 0 --no-scenecut --pass 1 --video-filter "resize:width=160,heigh=90" video_p3.mp4 
+   25  ./x264 --output low_config.264 --fps 24 --preset slow --bitrate 100 --vbv-maxrate 4800 --vbv-bufsize 9600 --min-keyint 48 --keyint 48 --scenecut 0 --no-scenecut --pass 1 --video-filter "resize:width=160,height=90" video_p3.mp4 
+   26  ls
+   27  ./x264 --output mid_config.264 --fps 24 --preset slow --bitrate 600 --vbv-maxrate 4800 --vbv-bufsize 9600 --min-keyint 48 --keyint 48 --scenecut 0 --no-scenecut --pass 1 --video-filter "resize:width=640,height=360" video_p3.mp4 
+   28  ./x264 --output high_config.264 --fps 24 --preset slow --bitrate 2400 --vbv-maxrate 4800 --vbv-bufsize 9600 --min-keyint 48 --keyint 48 --scenecut 0 --no-scenecut --pass 1 --video-filter "resize:width=1280,height=720" video_p3.mp4 
+   29  ls
+   30  cd gpac_public/
+   31  ls
+   32  cd bin
+   33  ls
+   34  cd gcc/
+   35  ls
+   36  pwd
+   37  cd ..
+   38  ./home/irac_p3/gpac_public/bin/gcc/MP4Box -add high_config.264 -fps 24 high_config.mp4
+   39  ./gpac_public/bin/gcc/MP4Box -add high_config.264 -fps 24 high_config.mp4
+   40  ./gpac_public/bin/gcc/MP4Box -add mid_config.264 -fps 24 mid_config.mp4
+   41  ./gpac_public/bin/gcc/MP4Box -add low_config.264 -fps 24 low_config.mp4
+   42  wget https://www.bok.net/Bento4/binaries/Bento4-SDK-1-6-0-641.x86_64-unknown-linux.zip
+   43  ls
+   44  apt install unzip
+   45  unzip Bento4-SDK-1-6-0-641.x86_64-unknown-linux.zip 
+   46  ls
+   47  mv Bento4-SDK-1-6-0-641.x86_64-unknown-linux Bento4
+   48  ls
+   49  cd Bento4
+   50  ls
+   51  cd bin/
+   52  ls
+   53  cd ..
+   54  ./Bento4/bin/mp4fragment high_config.mp4 high_config_f.mp4
+   55  ./Bento4/bin/mp4fragment mid_config.mp4 mid_config_f.mp4
+   56  ./Bento4/bin/mp4fragment low_config.mp4 low_config_f.mp4
+   57  ls
+   58  ./Bento4/bin/mp4dash high_config_f.mp4 mid_config_f.mp4 low_config_f.mp4
+   59  ls
+   60  cd output/
+   61  ls
+   62  cd video/
+   63  ls
+   64  cd avc1/
+   65  ls
+   66  cd ..
+   67  ls
+   68  cd avc1/
+   69  ls
+   70  cd 1/
+   71  ls
+   72  cd ..
+   73  ls
+   74  cd ..
+   75  ls
+   76  cd ..
+   77  ls
+   78  cd ..
+   79  ls
+   80  nano index.html
+   81  python3 -m http.server
+   82  ls
+   83  ./Bento4/bin/mp4encrypt --method MPEG-CENC --key 1:87237D20A19F58A740C05684E699B4AA:random --property 1:KID:A16E402B9056E371F36D348AA62BB749 --key 2:87237D20A19F58A740C05684E699B4AA:random --property 2:KID:A16E402B9056E371F36D348AA62BB749 --global-option mpeg-cenc.eme-pssh:true high_config_f.mp4 high_config_encrypt.mp4
+   84  ./Bento4/bin/mp4encrypt --method MPEG-CENC --key 1:87237D20A19F58A740C05684E699B4AA:random --property 1:KID:A16E402B9056E371F36D348AA62BB749 --key 2:87237D20A19F58A740C05684E699B4AA:random --property 2:KID:A16E402B9056E371F36D348AA62BB749 --global-option mpeg-cenc.eme-pssh:true mid_config_f.mp4 mid_config_encrypt.mp4
+   85  ./Bento4/bin/mp4encrypt --method MPEG-CENC --key 1:87237D20A19F58A740C05684E699B4AA:random --property 1:KID:A16E402B9056E371F36D348AA62BB749 --key 2:87237D20A19F58A740C05684E699B4AA:random --property 2:KID:A16E402B9056E371F36D348AA62BB749 --global-option mpeg-cenc.eme-pssh:true low_config_f.mp4 low_config_encrypt.mp4
+   86  ./Bento4/bin/mp4dash high_config_encrypt.mp4 mid_config_encrypt.mp4 low_config_encrypt.mp4
+   87  mv output/ output_011
+   88  ./Bento4/bin/mp4dash high_config_encrypt.mp4 mid_config_encrypt.mp4 low_config_encrypt.mp4
+   89  python3 -m http.server
+   90  ls
+   91  nano index.html 
+   92  python3 -m http.server
+   93  ls
+   94  nano index.html 
+   95  python3 -m http.server
+   96  nano index.html 
+   97  python3 -m http.server
+   98  ls
+   99  exit
+  100  ls
+  101  cd ficheros_p3/
+  102  ls
+  103  hisotry
+  104  history
+  105  history < history.txt
+  106  history > history.txt
