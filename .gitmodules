@@ -1,0 +1,3 @@
+[submodule "Parte5/drmqs"]
+	path = Parte5/drmqs
+	url = https://github.com/Axinom/drm-quick-start?tab=readme-ov-file
