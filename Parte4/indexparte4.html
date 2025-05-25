@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Reproductor con Chart.js</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="dash.all.min.js"></script>
+</head>
+<body>
+
+  <div class="code">
+    <video id="videoPlayer" height="360" width="640" class="dashjs-player" autoplay controls preload="auto" muted></video>
+  </div>
+
+  <div class="code">
+    <p>Video Bitrate: <span id="bitrate"></span> kbps</p>
+    <p>Video Buffer: <span id="buffer"></span> seconds</p>
+    <p>Video Representation: <span id="representation"></span></p>
+  </div>
+
+  <canvas id="grafico" width="800" height="400"></canvas>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const video = document.getElementById("videoPlayer");
+      const player = dashjs.MediaPlayer().create();
+
+      // Protección (ClearKey)
+      const prodData = {
+        "org.w3.clearkey": {
+          "clearkeys": {
+            "oW5AK5BW43HzbTSKpiu3SQ": "hyN9IKGfWKdAwFaE5pm0qg"
+          }
+        }
+      };
+
+      // Inicializar DASH
+      player.initialize(video, "./ficheros_p3/outputencrypt/stream.mpd", true);
+      player.setProtectionData(prodData);
+
+      // Chart.js setup
+      const MAX_POINTS = 30;
+      const labels = [];
+      const bufferData = [];
+      const bitrateData = [];
+
+      const ctx = document.getElementById('grafico').getContext('2d');
+      const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Buffer Level',
+              data: bufferData,
+              borderColor: 'rgba(255, 99, 132, 1)',
+              backgroundColor: 'rgba(255, 99, 132, 0.4)',
+              yAxisID: 'y',
+              fill: true,
+              tension: 0.4,
+              pointRadius: 0
+            },
+            {
+              label: 'Bitrate',
+              data: bitrateData,
+              borderColor: 'rgba(54, 162, 235, 1)',
+              backgroundColor: 'rgba(54, 162, 235, 0.4)',
+              yAxisID: 'y1',
+              fill: true,
+              tension: 0.4,
+              pointRadius: 3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          animation: false,
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
+          stacked: false,
+          plugins: {
+            legend: {
+              position: 'top'
+            }
+          },
+          scales: {
+            y: {
+              type: 'linear',
+              position: 'left',
+              title: {
+                display: true,
+                text: 'Buffer Level (s)'
+              },
+              suggestedMin: 0
+            },
+            y1: {
+              type: 'linear',
+              position: 'right',
+              title: {
+                display: true,
+                text: 'Bitrate (kbps)'
+              },
+              grid: {
+                drawOnChartArea: false
+              }
+            }
+          }
+        }
+      });
+
+      // Actualización periódica
+      const interval = setInterval(() => {
+        const streamInfo = player.getActiveStream().getStreamInfo();
+        const dashMetrics = player.getDashMetrics();
+        const dashAdapter = player.getDashAdapter();
+
+        if (!streamInfo || !dashMetrics || !dashAdapter) return;
+
+        const periodIdx = streamInfo.index;
+        const repSwitch = dashMetrics.getCurrentRepresentationSwitch('video');
+        const bufferLevel = dashMetrics.getCurrentBufferLevel('video');
+        const bitrate = repSwitch ?
+          Math.round(dashAdapter.getBandwidthForRepresentation(repSwitch.to, periodIdx) / 1000) : NaN;
+
+        // Mostrar texto
+        document.getElementById('buffer').innerText = bufferLevel.toFixed(2);
+        document.getElementById('bitrate').innerText = bitrate;
+        document.getElementById('representation').innerText = repSwitch?.to || 'N/A';
+
+        // Añadir al gráfico
+        const now = new Date().toLocaleTimeString();
+        labels.push(now);
+        bufferData.push(bufferLevel);
+        bitrateData.push(bitrate);
+
+        // Limitar cantidad de puntos
+        if (labels.length > MAX_POINTS) {
+          labels.shift();
+          bufferData.shift();
+          bitrateData.shift();
+        }
+
+        chart.update();
+      }, 500);
+
+      // Limpiar cuando termine
+      player.on(dashjs.MediaPlayer.events["PLAYBACK_ENDED"], function () {
+        clearInterval(interval);
+      });
+    });
+  </script>
+</body>
+</html>
