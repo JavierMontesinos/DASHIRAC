@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<header>
+<script src="dash.all.min.js"></script>
+</header>
+<body>
+<video class="dashjs-player" autoplay controls preload="auto">
+<source src="https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd" type="application/dash+xml"/>
+</video>
+</body>
+
+<script>
+ var player;
+ document.addEventListener("DOMContentLoaded", function () {
+ init();
+ });
+ function init(){
+ player = dashjs.MediaPlayerFactory.create( document.querySelector(".dashjs-player"));
+ };
+</script>
+</html>
